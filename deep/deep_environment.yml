@@ -1,0 +1,13 @@
+name: deeplearning
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - pandas
+  - scikit-learn
+  - keras
+  - python==3.7.6
+  - pyarrow
+  - tensorflow
+  - h5py
+  - matplotlib

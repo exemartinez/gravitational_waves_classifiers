@@ -46,17 +46,18 @@ model.summary()
 
 model.compile(optimizer=optimizers.RMSprop(lr=1e-4), loss='binary_crossentropy', metrics=['binary_accuracy'])
 #model.fit(images, labels, epochs=5, batch_size=100)
-history = model.fit(images, labels, epochs=30, steps_per_epoch=100, batch_size=None, validation_data=(images_val, labels_val), validation_steps=50)
+history = model.fit(images, labels, epochs=5, batch_size=100, validation_data=(images_val, labels_val))
+
 
 model.save(model_file)
 
 # Print training images
 
-acc = history.history['acc']
-val_acc = history.history['val_acc']
+acc = history.history['binary_accuracy']
+val_acc = history.history['val_binary_accuracy']
 
-loss = history.history['acc']
-val_loss = history.history['val_acc']
+loss = history.history['loss']
+val_loss = history.history['val_loss']
 
 epochs = range(1, len(acc)+ 1)
 
@@ -66,6 +67,8 @@ plt.title("Trainig and Validation Accuracy - ConvNets")
 plt.legend()
 
 plt.savefig(gw_convnet_acc, bbox_inches = 'tight',pad_inches = 0)
+
+plt.clf()
 
 plt.plot(epochs, loss, 'bo', label='Training Loss')
 plt.plot(epochs, val_loss, 'b', label='Validation Loss')

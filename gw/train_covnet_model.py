@@ -45,8 +45,8 @@ model.summary()
 # train the recurrent neural network
 
 model.compile(optimizer=optimizers.RMSprop(lr=1e-4), loss='binary_crossentropy', metrics=['binary_accuracy'])
-#model.fit(images, labels, epochs=5, batch_size=100)
-history = model.fit(images, labels, epochs=5, batch_size=100, validation_data=(images_val, labels_val))
+history = model.fit(images, labels, epochs=5, batch_size=100)
+#history = model.fit(images, labels, epochs=5, batch_size=100, validation_data=(images_val, labels_val))
 
 
 model.save(model_file)

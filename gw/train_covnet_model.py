@@ -4,8 +4,9 @@ import pandas as pd
 from keras import layers
 from keras import models
 from keras import optimizers
+from keras.callbacks import EarlyStopping
+from keras.callbacks import ModelCheckpoint
 from keras.utils import to_categorical
-import os
 import numpy as np
 
 
@@ -13,6 +14,7 @@ import numpy as np
 image_file='./dataset/gw_%s_images.npy'
 labels_file='./dataset/gw_%s_labels.npy'
 model_file = './models/gw_convnet.model'
+model_opt_file = './models/gw_convnet_optimal.model'
 gw_convnet_acc = './models_images/gw_convnet_acc.png'
 gw_convnet_loss = './models_images/gw_convnet_loss.png'
 
@@ -45,10 +47,15 @@ model.summary()
 # train the recurrent neural network
 
 model.compile(optimizer=optimizers.RMSprop(lr=1e-4), loss='binary_crossentropy', metrics=['binary_accuracy'])
-history = model.fit(images, labels, epochs=5, batch_size=100)
-#history = model.fit(images, labels, epochs=5, batch_size=100, validation_data=(images_val, labels_val))
+#history = model.fit(images, labels, epochs=5, batch_size=100)
 
 
+callbacks = [
+    EarlyStopping(monitor='val_loss', patience=3, verbose=0, restore_best_weights=True),
+    ModelCheckpoint(filepath=model_opt_file, monitor='val_loss', save_best_only=True, verbose=0),
+]
+
+history = model.fit(images, labels, epochs=30, batch_size=100, validation_data=(images_val, labels_val), callbacks=callbacks)
 model.save(model_file)
 
 # Print training images

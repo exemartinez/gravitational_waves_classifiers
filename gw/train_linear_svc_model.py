@@ -21,6 +21,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
+from sklearn.metrics import classification_report
 
 
 # load the dataset
@@ -43,8 +44,8 @@ labels = labels.astype('int')
 images_validation =images_validation.reshape(images_validation.shape[0],SHAPE_SIZE_X * SHAPE_SIZE_Y)
 labels_validation = labels_validation.astype('int')
 
-np.random.shuffle(labels_validation) # just testing that everything is in the proper place suffling the samples.
-np.random.shuffle(labels) 
+#np.random.shuffle(labels_validation) # just testing that everything is in the proper place suffling the samples.
+#np.random.shuffle(labels) 
 
 # Optimization of hyperparameters
 # C_range = np.logspace(-2, 10, 13)
@@ -59,7 +60,7 @@ np.random.shuffle(labels)
 #       % (grid.best_params_, grid.best_score_))
 
 # Train the Linear SVM
-model  = svm.SVC(kernel='linear', C =1, probability=True, class_weight="balanced", verbose=0)
+model  = svm.SVC(kernel='linear', C =1.0, probability=True, class_weight="balanced", verbose=0)
 
 model = model.fit(images, labels)
 
@@ -100,4 +101,8 @@ plt.xlabel('False Positive Rate')
 plt.savefig(gw_roc_file, bbox_inches = 'tight',pad_inches = 0)
 
 
+# Training report
 
+target_names = [1,0]
+pred_labels = model.predict(images_validation)
+print(classification_report(labels_validation, pred_labels))

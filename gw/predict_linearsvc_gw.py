@@ -17,7 +17,9 @@ from sklearn.metrics import roc_curve, auc
 
 #load the set
 image_file='./dataset/gw_%s_images.npy'
-model_file = './models/gw_linearsvc.model'
+#model_file = './models/gw_linearsvc.model'
+#model_file = './models/gw_linearsvc_reduced_custom.model'
+model_file = './models/gw_linearsvc_reduced.model'
 labels_file='./dataset/gw_%s_labels.npy'
 gw_img_file='./dataset/gw_images/gw_%s_%s_linearsvc.png'
 
@@ -60,7 +62,12 @@ def identify_predicted_gw(subdataset):
         plt.gca().yaxis.set_major_locator(plt.NullLocator())
         plt.savefig( gw_img_file % (subdataset,indexes[i]), bbox_inches = 'tight',pad_inches = 0)
         
+        print(i)
+
         i = i + 1
+    
+    return
 
 identify_predicted_gw("validation")
+print("Now the TEST set...")
 identify_predicted_gw("test")

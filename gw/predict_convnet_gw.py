@@ -8,14 +8,49 @@ from keras.models import load_model
 import os
 import numpy as np
 import matplotlib.rcsetup as rcsetup
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import auc
+from sklearn.metrics import roc_curve
+from sklearn.metrics import classification_report
 
 #load the set
 image_file='./dataset/gw_%s_images.npy'
 model_file = './models/gw_convnet.model'
 labels_file='./dataset/gw_%s_labels.npy'
 gw_img_file='./dataset/gw_images/gw_%s_%s_convnet.png'
+gw_roc_file = './models_images/gw_convnet_%s_roc.png'
 
 model = load_model(model_file)
+
+def plot_metrics(model,images,labels,dataset):
+    # calculate the fpr and tpr for all thresholds of the classification
+    labels = labels.astype("int32")
+    preds = model.predict_proba(images).ravel()
+
+    fpr, tpr, threshold = roc_curve(labels, preds)
+    roc_score = roc_auc_score(labels, preds, average = 'weighted')
+    print("ROC score: %s" % repr(roc_score))
+    roc_auc = auc(fpr, tpr)
+    print("AUC score: %s" % repr(roc_auc))
+
+    # ploting to a file
+
+    plt.title('Receiver Operating Characteristic')
+    plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
+    plt.legend(loc = 'lower right')
+    plt.plot([0, 1], [0, 1],'r--')
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+
+    plt.savefig(gw_roc_file % dataset, bbox_inches = 'tight',pad_inches = 0)
+
+    # Training report
+
+    target_names = [1,0]
+    pred_labels = model.predict_classes(images)
+    print(classification_report(labels, pred_labels))
 
 '''
 Saves the predicted images from the given sub-set
@@ -51,6 +86,8 @@ def identify_predicted_gw(subdataset):
         plt.savefig( gw_img_file % (subdataset,indexes[i]), bbox_inches = 'tight',pad_inches = 0)
 
         i = i + 1
+    
+    plot_metrics(model, images, labels,subdataset)
 
 identify_predicted_gw("validation")
 identify_predicted_gw("test")

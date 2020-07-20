@@ -51,7 +51,7 @@ model.compile(optimizer=optimizers.RMSprop(lr=1e-4), loss='binary_crossentropy',
 
 
 callbacks = [
-    EarlyStopping(monitor='val_loss', patience=3, verbose=0, restore_best_weights=True),
+    EarlyStopping(monitor='val_loss', patience=1, verbose=0, restore_best_weights=True),
     ModelCheckpoint(filepath=model_opt_file, monitor='val_loss', save_best_only=True, verbose=0),
 ]
 

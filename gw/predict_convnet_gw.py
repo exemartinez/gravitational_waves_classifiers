@@ -12,10 +12,11 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
 from sklearn.metrics import classification_report
+import time
 
 #load the set
 image_file='./dataset/gw_%s_images.npy'
-model_file = './models/gw_convnet.model'
+model_file = './models/gw_convnet_optimal.model'
 labels_file='./dataset/gw_%s_labels.npy'
 gw_img_file='./dataset/gw_images/gw_%s_%s_convnet.png'
 gw_roc_file = './models_images/gw_convnet_%s_roc.png'
@@ -62,7 +63,10 @@ def identify_predicted_gw(subdataset):
 
     # make prediction
     print("="*30)
+
+    start_time = time.time()
     prediction = model.predict_classes(images, verbose=True, batch_size=151)
+    print("Predict CONVNET --- %s seconds ---" % (time.time() - start_time))
 
     print(" Convolutional Neural Network")
     print( "Amount of Gravitational Waves identified by the model: %s" % str(prediction[prediction > 0 ].shape[0]))

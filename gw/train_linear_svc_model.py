@@ -22,6 +22,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import classification_report
+import time
 
 
 # load the dataset
@@ -62,16 +63,23 @@ labels_validation = labels_validation.astype('int')
 # Train the Linear SVM
 model  = svm.SVC(kernel='linear', C =1.0, probability=True, class_weight="balanced", verbose=0)
 
+start_time = time.time()
 model = model.fit(images, labels)
+print("Train LINEAR SVC --- %s seconds ---" % (time.time() - start_time))
 
+start_time = time.time()
 basic_score = model.score(images_validation, labels_validation)
+print("Validation LINEAR SVC --- %s seconds ---" % (time.time() - start_time))
 
 print("Linear SVC scikit learn basic score: %0.4f" % basic_score)
 
 # Validating the model and evaluation
+start_time = time.time()
 scores = cross_validate(model, images_validation, labels_validation, cv=5, scoring=('f1','roc_auc_ovo'), return_train_score=True)
+print("Cross Validation LINEAR SVC --- %s seconds ---" % (time.time() - start_time))
 
 cross_score = model.score(images_validation, labels_validation)
+
 
 print("Linear SVC scikit learn cross-val score: %0.4f" % cross_score)
 print(scores)

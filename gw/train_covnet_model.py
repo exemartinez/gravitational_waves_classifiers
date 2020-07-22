@@ -8,7 +8,7 @@ from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 from keras.utils import to_categorical
 import numpy as np
-
+import time
 
 # load the dataset
 image_file='./dataset/gw_%s_images.npy'
@@ -55,7 +55,10 @@ callbacks = [
     ModelCheckpoint(filepath=model_opt_file, monitor='val_loss', save_best_only=True, verbose=0),
 ]
 
+start_time = time.time()
 history = model.fit(images, labels, epochs=30, batch_size=100, validation_data=(images_val, labels_val), callbacks=callbacks)
+print("Train CONVNET --- %s seconds ---" % (time.time() - start_time))
+
 model.save(model_file)
 
 # Print training images

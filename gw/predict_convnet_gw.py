@@ -1,3 +1,10 @@
+#First, set the experiments seeds for reproducible results.
+RANDOM_SEED = 150914 # from event GW150914, first gravitational wave event detected, :)
+from numpy.random import seed
+seed(RANDOM_SEED)
+from tensorflow import set_random_seed
+set_random_seed(RANDOM_SEED)
+
 import matplotlib.pyplot as plt
 from tensorflow import keras
 import pandas as pd
@@ -16,8 +23,10 @@ import time
 
 #load the set
 image_file='./dataset/gw_%s_images.npy'
-model_file = './models/gw_convnet_optimal.model'
 labels_file='./dataset/gw_%s_labels.npy'
+
+model_file = './models/gw_convnet.model'
+
 gw_img_file='./dataset/gw_images/gw_%s_%s_convnet.png'
 gw_roc_file = './models_images/gw_convnet_%s_roc.png'
 

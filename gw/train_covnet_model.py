@@ -1,3 +1,11 @@
+
+#First, set the experiments seeds for reproducible results.
+RANDOM_SEED = 150914 # from event GW150914, first gravitational wave event detected, :)
+from numpy.random import seed
+seed(RANDOM_SEED)
+from tensorflow import set_random_seed
+set_random_seed(RANDOM_SEED)
+
 import matplotlib.pyplot as plt
 import keras as k
 import pandas as pd

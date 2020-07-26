@@ -24,16 +24,17 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import classification_report
 import time
 
-
 # load the dataset
 image_file='./dataset/gw_%s_images.npy'
 labels_file='./dataset/gw_%s_labels.npy'
 model_file = './models/gw_linearsvc.model'
 gw_roc_file = './models_images/gw_linear_svc_roc.png'
 
-
+RANDOM_SEED = 150914 # from event GW150914, first gravitational wave event detected, :)
 SHAPE_SIZE_X = 140
 SHAPE_SIZE_Y = 170
+
+np.random.seed(RANDOM_SEED)
 
 images = np.load(image_file % "train", allow_pickle=True)
 labels = np.load(labels_file % "train", allow_pickle=True)

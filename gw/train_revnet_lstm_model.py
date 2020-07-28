@@ -1,3 +1,10 @@
+#First, set the experiments seeds for reproducible results.
+RANDOM_SEED = 150914 # from event GW150914, first gravitational wave event detected, :)
+from numpy.random import seed
+seed(RANDOM_SEED)
+from tensorflow import set_random_seed
+set_random_seed(RANDOM_SEED)
+
 import matplotlib.pyplot as plt
 import keras as k
 import pandas as pd
@@ -95,8 +102,8 @@ labels = np.load(labels_file % "test" , allow_pickle=True)
 # evaluate performance on the test set
 test_loss, test_acc = model.evaluate(images, labels)
 
-print("Convolutional Network model LOSS: %s" % str(test_loss))
-print("Convolutional Network model ACCURACY: %s" % str(test_acc))
+print("Recurrent Network model LOSS: %s" % str(test_loss))
+print("Recurrent Network model ACCURACY: %s" % str(test_acc))
 
 
 

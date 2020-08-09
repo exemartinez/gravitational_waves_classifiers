@@ -20,13 +20,21 @@ from keras.layers import LSTM
 from keras.layers import Embedding
 from keras.layers import Dense
 
+######
+
+from keras.models import Sequential, Model
+from keras.layers import (Conv1D, Conv2D, MaxPooling1D, AveragePooling1D, Reshape, Dense, Dropout,LSTM, Embedding, Bidirectional, Input, Flatten, Concatenate, Multiply, RepeatVector, Permute, BatchNormalization)
+from keras.preprocessing.sequence import pad_sequences
+from keras.callbacks import EarlyStopping, LambdaCallback
+from keras.optimizers import Adam,Nadam,SGD
+
 # load the dataset
 image_file='./dataset/gw_%s_images.npy'
 labels_file='./dataset/gw_%s_labels.npy'
-model_file = './models/gw_revnet_lstm.model'
-model_opt_file = './models/gw_revnet_lstm_optimal.model'
-gw_convnet_acc = './models_images/gw_revnet_lstm_acc.png'
-gw_convnet_loss = './models_images/gw_revnet_lstm_loss.png'
+model_file = './models/gw_revnet_exploted_lstm.model'
+model_opt_file = './models/gw_revnet_exploted_lstm_optimal.model'
+gw_convnet_acc = './models_images/gw_revnet_exploted_lstm_acc.png'
+gw_convnet_loss = './models_images/gw_revnet_exploted_lstm_loss.png'
 
 SHAPE_SIZE_X = 140
 SHAPE_SIZE_Y = 170
@@ -38,8 +46,11 @@ labels = np.load(labels_file % "train", allow_pickle=True)
 images_val = np.load(image_file % "validation", allow_pickle=True)
 labels_val = np.load(labels_file % "validation", allow_pickle=True)
 
-images = images.reshape(images.shape[0],max_features)
-images_val =  images_val.reshape(images_val.shape[0],max_features)
+#images = images.reshape(images.shape[0],max_features)
+#images_val =  images_val.reshape(images_val.shape[0],max_features)
+
+images = images.reshape(images.shape[0],SHAPE_SIZE_X, SHAPE_SIZE_Y)
+images_val =  images_val.reshape(images_val.shape[0],SHAPE_SIZE_X, SHAPE_SIZE_Y)
 
 '''
 Reduces the dataset balancing its binary classes to 50/50
@@ -92,15 +103,26 @@ def exploted_dataset(images, labels):
     return images, labels
     
 #reduces the testing dataset
-images, labels = reduced_dataset(images, labels)
+#images, labels = exploted_dataset(images, labels)
 
 
 #Designing the right model for the classification of the spectrograms
-model = models.Sequential()
+# model = models.Sequential()
 
-model.add(Embedding(max_features, 32))
-model.add(LSTM(32))
-model.add(Dense(1, activation='sigmoid'))
+# model.add(Embedding(max_features, 32))
+# model.add(LSTM(32))
+# model.add(Dense(1, activation='sigmoid'))
+
+weight_for_0 = (1 / 5546)*(5587)/2.0 
+weight_for_1 = (1 / 41)*(5587)/2.0
+class_weight = {0: weight_for_0, 1: weight_for_1}
+
+input = Input(shape=(SHAPE_SIZE_X, SHAPE_SIZE_Y))
+x = LSTM(4, return_sequences=True)(input)
+x = LSTM(4, return_sequences=True)(x)
+x = LSTM(4)(x)
+output=Dense(1, activation='sigmoid')(x)
+model = Model(inputs=input , outputs=output)
 
 model.summary()
 
@@ -116,7 +138,7 @@ callbacks = [
 ]
 
 start_time = time.time()
-history = model.fit(images, labels, epochs=30, batch_size=100, validation_data=(images_val, labels_val), callbacks=callbacks)
+history = model.fit(images, labels, epochs=30, batch_size=100, validation_data=(images_val, labels_val), callbacks=callbacks, class_weight=class_weight)
 print("Train REVNET --- %s seconds ---" % (time.time() - start_time))
 
 model.save(model_file)
@@ -150,7 +172,7 @@ plt.savefig(gw_convnet_loss, bbox_inches = 'tight',pad_inches = 0)
 # load the test set 
 
 images = np.load(image_file % "test")
-images = images.reshape(images.shape[0],max_features)
+images = images.reshape(images.shape[0],SHAPE_SIZE_X, SHAPE_SIZE_Y)
 labels = np.load(labels_file % "test" , allow_pickle=True)
 
 # evaluate performance on the test set
